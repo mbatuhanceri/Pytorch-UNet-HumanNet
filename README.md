@@ -11,6 +11,9 @@ Can we segmentation humans in video brodcast that coming from unarmed air vehicl
 - Cvat is used for data annotation.
 
 # Observation
-- Humans successfully can be segmentated.
-- AI having hard times to distinguish human-like objects like bushes
-
+- **Humans successfully can be segmentated.**
+	![alt text](media\0.jpg)
+    ![alt text](media\2.jpg)
+    ![alt text](media\10.jpg)
+- **AI having hard times to distinguish human-like objects like bushes**
+    ![alt text](media\25.jpg)
