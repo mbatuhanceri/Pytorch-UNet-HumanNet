@@ -12,8 +12,8 @@ Can we segmentation humans in video brodcast that coming from unarmed air vehicl
 
 # Observation
 - **Humans successfully can be segmentated.**
-	![alt text](media\0.jpg)
-    ![alt text](media\2.jpg)
-    ![alt text](media\10.jpg)
+	![media\0.jpg](media/0.jpg)
+    ![media\2.jpg](media/2.jpg)
+    ![media\10.jpg](media/10.jpg)
 - **AI having hard times to distinguish human-like objects like bushes**
-    ![alt text](media\25.jpg)
+    ![media\25.jpg](media/25.jpg)
