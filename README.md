@@ -4,7 +4,7 @@ Can we segmentation humans in video brodcast that coming from unarmed air vehicl
 # Setup
 - Custom UNet architecture is used.
 - Pytorch framework is used.
-- used language is pyton.
+- Used language is python.
 - The dataset collected from a geme named Arma 3.
 - There are binary masks of humans in dataset.
 - Algorithms tested with RTX 3070 and i5-11600k.
