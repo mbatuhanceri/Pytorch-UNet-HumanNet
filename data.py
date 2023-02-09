@@ -13,8 +13,8 @@ class HumanDataset(Dataset):
             self.input_channels = input_channels
             self.source_path = source_path
 
-            self.source_images = sorted(glob.glob(f"{source_path}/{dtype}/images/*"))
-            self.source_targets = sorted(glob.glob(f"{source_path}/{dtype}/masks/*"))
+            self.source_images = sorted(glob.glob(f"{source_path}/{dtype}/A/*"))
+            self.source_targets = sorted(glob.glob(f"{source_path}/{dtype}/OUT/*"))
             
             self.to_tensor = transforms.ToTensor()
         

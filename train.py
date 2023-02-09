@@ -10,11 +10,11 @@ import os
 
 epochs = 50
 batch_size = 2
-dataset_path = r"human_ir_dataset"
+dataset_path = r"D:\Projects\Datasets\WHU"
 
 def train():
     device = torch.device('cuda:0')
-    dataset = HumanDataset(dataset_path, "train", 1)
+    dataset = HumanDataset(dataset_path, "train", 3)
     model = UNet().to(device)
 
     if not os.path.exists('models'):
@@ -25,6 +25,7 @@ def train():
     best_loss = math.inf
 
     for epoch in range(epochs):
+        print(f">> CURRENT EPOCH: {epoch} <<<")
         dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=batch_size)
         
         epoch_loss = 0
@@ -40,12 +41,14 @@ def train():
             input = input.to(device)
             target = target.to(device)
 
+            optimizer.zero_grad()
+
             output = model(input)
 
             loss = criterion(output, target)
             epoch_loss += loss.item()
-            optimizer.zero_grad()
-            loss.backward()
+
+            loss.backward()            
             optimizer.step()
 
             input_sample = cv2.resize(input[0].cpu().numpy().transpose(1, 2, 0), dsize=(640, 720))

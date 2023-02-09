@@ -21,7 +21,7 @@ class DoubleConv(nn.Module):
 class InConv(nn.Module):
     def __init__(self, out_channels):
         super(InConv, self).__init__()
-        self.input_conv = DoubleConv(1, out_channels)
+        self.input_conv = DoubleConv(3, out_channels)
 
     def forward(self, x):
         return self.input_conv(x)
@@ -69,11 +69,11 @@ class UNet(nn.Module):
     def forward(self, input):
         x0 = self.in_conv(input)
         x1 = self.down_1(x0)
-        x = self.down_2(x1)
-        # x3 = self.down_3(x2)
+        x2 = self.down_2(x1)
+        x = self.down_3(x2)
         # x = self.down_4(x3)
         # x = self.up_4(x, x3)
-        # x = self.up_3(x, x2)
+        x = self.up_3(x, x2)
         x = self.up_2(x, x1)
         x = self.up_1(x, x0)
         x = self.out_conv(x)
