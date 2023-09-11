@@ -23,10 +23,10 @@ def train():
     optimizer = torch.optim.AdamW(model.parameters(), lr=0.005)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, factor=0.5, patience=2, min_lr=0.0000001, verbose=True)
     best_loss = math.inf
+    dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=batch_size)
 
     for epoch in range(epochs):
-        print(f">> CURRENT EPOCH: {epoch} <<<")
-        dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True, num_workers=batch_size)
+        print(f">> CURRENT EPOCH: {epoch} <<<")        
         
         epoch_loss = 0
         iterations = 0
