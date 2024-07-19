@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import Dataset, DataLoader, random_split
 from torchvision import transforms
 import os
@@ -5,49 +6,77 @@ import numpy as np
 import cv2
 import glob
 from pathlib import Path
-
+from torchvision.transforms import v2
+import torchvision.transforms.functional as TF
+import random
 
 
 class HumanDataset(Dataset):
-        def __init__(self,source_path, dtype, input_channels):
-            self.input_channels = input_channels
-            self.source_path = source_path
 
-            self.source_images = sorted(glob.glob(f"{source_path}/{dtype}/A/*"))
-            self.source_targets = sorted(glob.glob(f"{source_path}/{dtype}/OUT/*"))
-            
-            self.to_tensor = transforms.ToTensor()
-        
-        def __len__(self):
-            return len(self.source_images)
-              
-        
-        def __getitem__(self,idx):
-            image_path = self.source_images[idx]
-            mask_path = self.source_targets[idx]
+    def sameRandomTrans(self, image, mask):
+        image = TF.to_pil_image(image)
+        mask = TF.to_pil_image(mask)
 
-            image = cv2.imread(image_path)
-            mask = cv2.imread(mask_path)
-            
-            image = cv2.resize(image, (1280, 720))
-            mask = cv2.resize(mask, (1280, 720))
+        if random.random() > 0.5:
+            image = TF.hflip(image)
+            mask = TF.hflip(mask)
 
-            if self.input_channels == 1:
-                image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+        if random.random() > 0.5:
+            image = TF.vflip(image)
+            mask = TF.vflip(mask)
 
-            mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
-            mask[mask > 0] = 255
+        if random.random() > 0.5:
+            angle = random.uniform(-30, 30)
+            image = TF.rotate(image, angle)
+            mask = TF.rotate(mask, angle)
 
-            # cv2.imshow("image", image)
-            # cv2.imshow("mask", mask)
-            # cv2.waitKey(0)
+        image = TF.to_tensor(image)
+        mask = TF.to_tensor(mask)
 
+        return image, mask
+
+    def __init__(self, source_path, dtype, input_channels):
+        self.dtype = dtype
+        self.input_channels = input_channels
+        self.source_path = source_path
+
+        self.source_images = sorted(glob.glob(f"{source_path}\\{dtype}\\images\\*"))
+        self.source_targets = sorted(glob.glob(f"{source_path}\\{dtype}\\masks\\*"))
+
+        self.to_tensor = transforms.ToTensor()
+
+    def __len__(self):
+        return len(self.source_images)
+
+    def __getitem__(self, idx):
+        image_path = self.source_images[idx]
+        image = cv2.imread(image_path)
+        image = cv2.resize(image, (640, 480))
+        if self.input_channels == 1:
+            image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            image = np.expand_dims(image, axis=-1)
+
+        if self.dtype == "test":
             image = self.to_tensor(image)
-            mask = self.to_tensor(mask)
-            
-            return (image,mask)
+            return image
+
+        mask_path = self.source_targets[idx]
+        mask = cv2.imread(mask_path)
+        mask = cv2.resize(mask, (640, 480))
+        mask = cv2.cvtColor(mask, cv2.COLOR_BGR2GRAY)
+        mask = (mask / 255).astype('float32')
+        mask = np.expand_dims(mask, axis=-1)
+
+        if self.dtype == "train":
+            image, mask = self.sameRandomTrans(image, mask)
+
+            return image, mask
+
+        else:
+            return image, mask
 
 
 if __name__ == "__main__":
-    dataset = HumanDataset(r"D:\Projects\unet2\carvana_dataset", "train",1)
-    dataset.__getitem__(5)
+    dataset = HumanDataset(r"C:\Users\bahad\intern\pytorch_unet_humannet\Datasets", "train", 1)
+    image, mask = dataset.__getitem__(5)
+    print(image.shape, mask.shape)
